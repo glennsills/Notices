@@ -15,7 +15,7 @@ namespace Notices.NoticeTests.UnitTests
 
         public OtherNotifierTests()
         {
-            _testNotifier = new TestNotifier(null, null);
+            _testNotifier = new TestNotifier(null, null, null);
         }
 
         [Fact]

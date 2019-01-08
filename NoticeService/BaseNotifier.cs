@@ -11,18 +11,20 @@ namespace Notices.NoticeService
 {
     public abstract class BaseNotifier
     {
-        private readonly INoticeEmail _emailService;
-        private readonly ILogger<BaseNotifier> _logger;
+        protected readonly IDocumentService _documentService;
+        protected readonly INoticeEmail _emailService;
+        protected readonly ILogger<BaseNotifier> _logger;
 
-        public BaseNotifier (ILogger<BaseNotifier> logger, INoticeEmail emailService)
+        public BaseNotifier (ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService)
         {
+            _documentService = documentService;
             _emailService = emailService;
             _logger = logger;
         }
 
         virtual public async Task<NoticeRecord> Notify (string principalIdentifier, Mandate mandate, string purpose)
         {
-            var information = await GetPrincipalInformationFromSource (principalIdentifier);
+            var information = await GetPrincipalInformationFromSource (principalIdentifier, purpose);
             var documentRecord = await CreateNotificationDocument (information);
             if (documentRecord.WasSuccessful)
             {
@@ -59,7 +61,7 @@ namespace Notices.NoticeService
             };
         }
 
-        public abstract Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier);
+        public abstract Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose);
         public abstract Task<DocumentRecord> CreateNotificationDocument (PrincipalInformation principalInfo);
         virtual internal Task < (bool wasSuccess, string archiveFile) > SendEmail (PrincipalInformation principalInformation)
         {

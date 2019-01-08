@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Notices.DocumentService;
 using Notices.NoticeData;
 using Notices.NoticeService;
@@ -31,18 +32,18 @@ namespace Notices.NoticeTests.IntegrationTests
         [Fact]
         public async Task CreateNoticeDocumentCreatesSimpleDocument()
         {
-            IDocumentService cut = new NoticeDocumentService(new FileSystem());
+            IDocumentService cut = new NoticeDocumentService(null, new FileSystem(), GetDocumentOptions());
             var actual = await cut.CreateNoticeDocument(
                 _principalInformation, 
                 "PaidSickLeave-MandatoryNotice-English.pdf",
-                _templateDirectory,
-                _documentArchiveDirectory,
                 Mandate.TestNotifications);
 
             Assert.True(File.Exists(actual.DocumentFilePath));
         }
 
-        
-
+        private IOptions<DocumentServiceOptions> GetDocumentOptions()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

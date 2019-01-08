@@ -9,5 +9,7 @@ namespace Notices.NoticeData
         public Dictionary<string,string> EmailParameters {get;set;}
 
         public Dictionary<string,string> FormParameters {get;set;}
+
+        public string DocumentTemplate {get;set;}
     }
 }

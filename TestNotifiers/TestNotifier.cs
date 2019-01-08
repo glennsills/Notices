@@ -11,7 +11,8 @@ namespace Notices.TestNotifiers
 {
     public class TestNotifier : BaseNotifier, ITestNotifier
     {
-        public TestNotifier (ILogger<BaseNotifier> logger, INoticeEmail emailService) : base (logger, emailService)
+        public TestNotifier (ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService) : 
+            base (logger, emailService, documentService)
         { }
 
 
@@ -20,7 +21,7 @@ namespace Notices.TestNotifiers
             throw new NotImplementedException ();
         }
 
-        override public Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier)
+        override public Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose)
         {
             var principalInfo = new PrincipalInformation
             {
@@ -32,7 +33,8 @@ namespace Notices.TestNotifiers
                 FormParameters = new Dictionary<string, string>{
                     {"Start of Calendar Year", "2019-01-01"},
                     {"End of Calendar Year", "2019-12-31"}
-                }                 
+                },
+                DocumentTemplate = "PaidSickLeave-MandatoryNotice-English.pdf"              
             };
             return Task.FromResult(principalInfo);
         }

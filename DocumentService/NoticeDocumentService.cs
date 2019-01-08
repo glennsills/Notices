@@ -6,29 +6,34 @@ using System.Threading.Tasks;
 using iText.Forms;
 using iText.Forms.Fields;
 using iText.Kernel.Pdf;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Notices.NoticeData;
+
 
 namespace Notices.DocumentService
 {
     public class NoticeDocumentService : IDocumentService
     {
         private IFileSystem _fileSystem;
+        private ILogger<NoticeDocumentService> _logger;
+        private DocumentServiceOptions _options;
 
-        public NoticeDocumentService (IFileSystem fileSystem)
+        public NoticeDocumentService (ILogger<NoticeDocumentService> logger, IFileSystem fileSystem, IOptions<DocumentServiceOptions> options)
         {
             _fileSystem = fileSystem;
+            _logger = logger;
+            _options = options.Value;
         }
 
         public Task<DocumentRecord> CreateNoticeDocument (
             PrincipalInformation principalInformation,
             string templateName,
-            string documentTemplateFolder,
-            string documentOutputFolder,
             Mandate mandate)
         {
 
-            var templatePath = GetFullPathToPDFForm (templateName, documentTemplateFolder);
-            var outputPath = GetFullDocumentArchivePath (documentOutputFolder, mandate);
+            var templatePath = GetFullPathToPDFForm (templateName, _options.TemplateDirectory);
+            var outputPath = GetFullDocumentArchivePath (_options.ArchiveDirectory, mandate);
 
             PdfDocument pdf = new PdfDocument (new PdfReader (templatePath), new PdfWriter (outputPath));
             PdfAcroForm form = PdfAcroForm.GetAcroForm (pdf, true);

@@ -11,19 +11,17 @@ namespace Notices.DCNotifier
     public class DCWageNotifier : BaseNotifier, IDCWageNotifier
     {
 
-        public DCWageNotifier(ILogger<BaseNotifier> logger, INoticeEmail emailService): base(logger, emailService){}
+        public DCWageNotifier(ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService)
+        : base(logger, emailService, documentService)
+        {}
 
-        public Task<NoticeRecord> Notify(string employeeIdentifier, Mandate mandate, string purpose)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<NoticeRecord> Remind(string employeeIdentifier, Mandate mandate, Guid notificationId, string alternateEmailAddress)
         {
             throw new NotImplementedException();
         }
 
-        override public Task<PrincipalInformation> GetPrincipalInformationFromSource(string principalIdentifier)
+        override public Task<PrincipalInformation> GetPrincipalInformationFromSource(string principalIdentifier, string purpose)
         {
             throw new NotImplementedException();
         }
