@@ -11,16 +11,18 @@ using Xunit;
 
 namespace NoticeTests.IntegrationTests
 {
-    public class OtherNotifierTests
+    public class TestNotifierTests
     {
         private NoticeDocumentService _documentService;
         private NoticeEmail _emailService;
 
-        public OtherNotifierTests ()
+        public TestNotifierTests ()
         {
-            _documentService = new NoticeDocumentService (null, new FileSystem (), null);
+            _documentService = new NoticeDocumentService (null, new FileSystem (), GetDocumentOptions());
             _emailService = new NoticeEmail (GetEmailOptions (), null, new FileSystem ());
         }
+
+
 
         [Fact(DisplayName="Notify Stores Document and Email")]
         public async Task NotifyStoresDocumentAndEmail ()
@@ -28,6 +30,16 @@ namespace NoticeTests.IntegrationTests
             var cut = new TestNotifier(null,_emailService, _documentService);
             var actual = await cut.Notify("123456789", Mandate.TestNotifications, "Initial");
             Assert.True(actual.WasSuccessful);
+        }
+
+        private IOptions<DocumentServiceOptions> GetDocumentOptions()
+        {
+            var dir = AppDomain.CurrentDomain.BaseDirectory;
+            return Options.Create<DocumentServiceOptions>( new DocumentServiceOptions
+            {
+                ArchiveDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests\DocumentArchive"),
+                TemplateDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests")
+            });
         }
 
         private IOptions<NoticeEmailOptions> GetEmailOptions ()

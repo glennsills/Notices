@@ -23,18 +23,22 @@ namespace Notices.TestNotifiers
 
         override public Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose)
         {
+            // Normall this information would come from a data source injected into the cstor
+
             var principalInfo = new PrincipalInformation
             {
                 EmailAddresses = new List<string>{"someone@somewhere.com"},
                 EmailParameters = new Dictionary<string,string>{
-                     {"link1_href", "https://www.google.com"},
-                     {"link1_text", "Just Google It."}
+                     {"Link1HREF", "https://www.google.com"},
+                     {"Link1Title", "Just Google It."},
+                     {"Subject", "Consider just googling it."}
                 },
                 FormParameters = new Dictionary<string, string>{
                     {"Start of Calendar Year", "2019-01-01"},
                     {"End of Calendar Year", "2019-12-31"}
                 },
-                DocumentTemplate = "PaidSickLeave-MandatoryNotice-English.pdf"              
+                DocumentTemplate = "PaidSickLeave-MandatoryNotice-English.pdf",   
+                EmailTemplate = "EmailTemplate.html"            
             };
             return Task.FromResult(principalInfo);
         }
@@ -46,7 +50,7 @@ namespace Notices.TestNotifiers
 
         public override Task<DocumentRecord> CreateNotificationDocument(PrincipalInformation principalInfo)
         {
-            throw new NotImplementedException();
+           return  _documentService.CreateNoticeDocument(principalInfo, Mandate.TestNotifications);
         }
     }
 }

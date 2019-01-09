@@ -7,7 +7,6 @@ namespace Notices.DocumentService
     {
         Task<DocumentRecord> CreateNoticeDocument(
              PrincipalInformation principalInformation, 
-             string templateName,
              Mandate mandate);
     }
 }

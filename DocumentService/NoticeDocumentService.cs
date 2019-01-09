@@ -28,19 +28,28 @@ namespace Notices.DocumentService
 
         public Task<DocumentRecord> CreateNoticeDocument (
             PrincipalInformation principalInformation,
-            string templateName,
             Mandate mandate)
         {
 
-            var templatePath = GetFullPathToPDFForm (templateName, _options.TemplateDirectory);
+            var templatePath = GetFullPathToPDFForm (principalInformation.DocumentTemplate, _options.TemplateDirectory);
             var outputPath = GetFullDocumentArchivePath (_options.ArchiveDirectory, mandate);
 
             PdfDocument pdf = new PdfDocument (new PdfReader (templatePath), new PdfWriter (outputPath));
             PdfAcroForm form = PdfAcroForm.GetAcroForm (pdf, true);
             IDictionary<String, PdfFormField> fields = form.GetFormFields ();
             PdfFormField toSet;
-            fields.TryGetValue ("Start of Calendar Year", out toSet);
-            toSet.SetValue ("2019-01-01");
+
+            foreach(var valuePair in principalInformation.FormParameters)
+            {
+                if (fields.TryGetValue (valuePair.Key, out toSet))
+                {
+                    toSet.SetValue(valuePair.Value);
+                }
+                else {
+                    throw new DocumentServiceException($"Key {valuePair.Key} does not exist in form parameters");
+                }
+            }
+
             form.FlattenFields ();
             pdf.Close ();
 

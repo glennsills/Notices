@@ -44,7 +44,11 @@ namespace Notices.NoticeTests.UnitTests
 
         private IOptions<DocumentServiceOptions> GetDocumentOptions()
         {
-            throw new NotImplementedException();
+            return Options.Create<DocumentServiceOptions> (new DocumentServiceOptions
+            {
+                ArchiveDirectory = @"c:\approot\archivefolder",
+                TemplateDirectory = @"c:\approot\templatefolder"
+            });
         }
 
         private MockFileSystem SetupFileSystem ()

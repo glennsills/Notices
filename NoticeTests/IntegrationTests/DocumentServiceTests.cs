@@ -24,7 +24,7 @@ namespace Notices.NoticeTests.IntegrationTests
             _documentArchiveDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\IntegrationTests\ArchiveFolder");
             _principalInformation = new PrincipalInformation
             {
-
+                DocumentTemplate="PaidSickLeave-MandatoryNotice-English.pdf",
             };
 
         }
@@ -35,7 +35,6 @@ namespace Notices.NoticeTests.IntegrationTests
             IDocumentService cut = new NoticeDocumentService(null, new FileSystem(), GetDocumentOptions());
             var actual = await cut.CreateNoticeDocument(
                 _principalInformation, 
-                "PaidSickLeave-MandatoryNotice-English.pdf",
                 Mandate.TestNotifications);
 
             Assert.True(File.Exists(actual.DocumentFilePath));
@@ -43,7 +42,11 @@ namespace Notices.NoticeTests.IntegrationTests
 
         private IOptions<DocumentServiceOptions> GetDocumentOptions()
         {
-            throw new NotImplementedException();
+            return Options.Create<DocumentServiceOptions> (new DocumentServiceOptions
+            {
+                ArchiveDirectory = _documentArchiveDirectory,
+                TemplateDirectory = _templateDirectory
+            });
         }
     }
 }

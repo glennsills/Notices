@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Notices.NoticeData;
 
 namespace Notices.EmailService
 {
@@ -8,6 +9,6 @@ namespace Notices.EmailService
         Task<string> SendNoticeEmail (string templateFilename,
             List<string> recipienents,
             Dictionary<string, string> parameters,
-            string mandateArchiveFoldername);
+            Mandate mandateArchiveFoldername);
     }
 }

@@ -8,6 +8,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using Notices.NoticeData;
 
 namespace Notices.EmailService
 {
@@ -36,13 +37,18 @@ namespace Notices.EmailService
         public async Task<string> SendNoticeEmail (string templateFilename,
             List<string> recipients,
             Dictionary<string, string> parameters,
-            string mandateArchiveFoldername)
+            Mandate mandate)
         {
             var message = CreateMessage (templateFilename, recipients, parameters);
-            var archiveFile = ArchiveMessage (message, mandateArchiveFoldername);
+            var archiveFile = ArchiveMessage (message, GetArchiveFolder(mandate));
             await SendMessage (message);
             return archiveFile;
 
+        }
+
+        private string GetArchiveFolder(Mandate mandate)
+        {
+            return Path.Combine(_options.EmailArchiveFolder, mandate.ToString());
         }
 
         internal MimeMessage CreateMessage (string templateFilename, List<string> recipients, Dictionary<string, string> parameters)
@@ -150,7 +156,6 @@ namespace Notices.EmailService
             return result;
 
         }
-
         internal MailboxAddress GetFromMailboxAddress ()
         {
             if (string.IsNullOrWhiteSpace (_options.EmailSenderName) || string.IsNullOrWhiteSpace (_options.EmailSenderAddress))

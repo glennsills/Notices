@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using MimeKit;
 using Notices.DCNotifier;
 using Notices.EmailService;
+using Notices.NoticeData;
 using Notices.NoticeService;
 using Notices.NoticeServiceImplementation;
 using Notices.TestNotifiers;
@@ -49,7 +50,7 @@ namespace Notices.NoticeTests.IntegrationTests
 
             var cut = new NoticeEmail (_testOptions, null, new FileSystem ());
 
-            var archiveFile =  await cut.SendNoticeEmail (_emailTemplate, recipients, parameters, "Tests");
+            var archiveFile =  await cut.SendNoticeEmail (_emailTemplate, recipients, parameters,Mandate.TestNotifications );
             
             Assert.True(File.Exists(archiveFile)); 
 

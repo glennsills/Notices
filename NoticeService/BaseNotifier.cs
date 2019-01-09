@@ -63,9 +63,17 @@ namespace Notices.NoticeService
 
         public abstract Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose);
         public abstract Task<DocumentRecord> CreateNotificationDocument (PrincipalInformation principalInfo);
-        virtual internal Task < (bool wasSuccess, string archiveFile) > SendEmail (PrincipalInformation principalInformation)
+        virtual internal async Task < (bool wasSuccess, string archiveFile) > SendEmail (PrincipalInformation principalInformation)
         {
-            throw new NotImplementedException ();
+            var pathToEmail = await _emailService.SendNoticeEmail(principalInformation.EmailTemplate, 
+            principalInformation.EmailAddresses,
+            principalInformation.EmailParameters, 
+            principalInformation.Madate);
+            if ( !string.IsNullOrEmpty(pathToEmail))
+            {
+                return (true, pathToEmail);
+            }
+            return (false, null);
         }
 
         virtual protected string GetEmailTemplate (Mandate madate, string purpose, bool isReminder)
