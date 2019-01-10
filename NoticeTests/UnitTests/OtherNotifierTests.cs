@@ -34,7 +34,7 @@ namespace Notices.NoticeTests.UnitTests
             testNotifier.Setup(x => x.Notify(It.IsAny<string>(), Mandate.TestNotifications, "Test")).ReturnsAsync(expected);
             dcNotifier.Setup(x => x.Notify(It.IsAny<string>(), Mandate.TestNotifications, "Test")).ReturnsAsync(notExpected);           
 
-            var cut = new NotifyService(dcNotifier.Object, testNotifier.Object);
+            var cut = new NoticeProviderSelector(dcNotifier.Object, testNotifier.Object);
             var actual = await cut.Notify("recipientId", Mandate.TestNotifications,"Test");
             Assert.Equal(expected.ProcessMessage, actual.ProcessMessage, true, true);
         }

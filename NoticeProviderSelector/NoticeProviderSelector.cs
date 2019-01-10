@@ -8,18 +8,18 @@ using Notices.NoticeData;
 
 namespace Notices.NoticeServiceImplementation
 {
-    public class NotifyService : INotify
+    public class NoticeProviderSelector : INoticeProvider
     {
-        private readonly INotify _dcNotifier;
-        private readonly INotify _testNotifier;
-        private readonly Dictionary<Mandate, INotify> _mandateProviderMap;
+        private readonly INoticeProvider _dcNotifier;
+        private readonly INoticeProvider _testNotifier;
+        private readonly Dictionary<Mandate, INoticeProvider> _mandateProviderMap;
 
-        public NotifyService (IDCWageNotifier dcNotifier, ITestNotifier testNotifier)
+        public NoticeProviderSelector (IDCWageNotifier dcNotifier, ITestNotifier testNotifier)
         {
             _dcNotifier = dcNotifier;
             _testNotifier = testNotifier;
 
-            _mandateProviderMap = new Dictionary<Mandate, INotify>()
+            _mandateProviderMap = new Dictionary<Mandate, INoticeProvider>()
             {
                 {Mandate.DCWageNotifications, _dcNotifier},
                 {Mandate.TestNotifications, _testNotifier}

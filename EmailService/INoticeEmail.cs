@@ -10,5 +10,11 @@ namespace Notices.EmailService
             List<string> recipienents,
             Dictionary<string, string> parameters,
             Mandate mandateArchiveFoldername);
+        Task<string> SendNoticeEmailWithAttachments(
+            string emailTemplate, 
+            List<string> emailAddresses, 
+            Dictionary<string, string> emailParameters, 
+            Mandate madate,
+            List<string> attachmentFiles);
     }
 }

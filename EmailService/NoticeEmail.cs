@@ -46,6 +46,11 @@ namespace Notices.EmailService
 
         }
 
+        public Task<string> SendNoticeEmailWithAttachments(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, Mandate madate, List<string> attachmentFiles)
+        {
+            throw new NotImplementedException();
+        }
+
         private string GetArchiveFolder(Mandate mandate)
         {
             return Path.Combine(_options.EmailArchiveFolder, mandate.ToString());
@@ -212,5 +217,7 @@ namespace Notices.EmailService
 
             return templateString;
         }
+
+
     }
 }

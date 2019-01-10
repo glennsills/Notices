@@ -27,7 +27,7 @@ namespace NoticeTests.IntegrationTests
         [Fact(DisplayName="Notify Stores Document and Email")]
         public async Task NotifyStoresDocumentAndEmail ()
         {
-            var cut = new TestNotifier(null,_emailService, _documentService);
+            var cut = new TestNoticeProvider(null,_emailService, _documentService);
             var actual = await cut.Notify("123456789", Mandate.TestNotifications, "Initial");
             Assert.True(actual.WasSuccessful);
         }

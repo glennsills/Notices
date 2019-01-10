@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeService", "NoticeService\NoticeService.csproj", "{7F06E115-8B31-4395-90F9-3E74043AD301}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeProvider", "NoticeProvider\NoticeProvider.csproj", "{7F06E115-8B31-4395-90F9-3E74043AD301}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeData", "NoticeData\NoticeData.csproj", "{4F95B396-757C-432C-AAF1-ED499273ADEC}"
 EndProject
@@ -13,9 +13,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailServic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCNotifier", "DCNotifier\DCNotifier.csproj", "{E41B7DCC-675F-4D79-87E0-DD85288CFB12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNotifiers", "TestNotifiers\TestNotifiers.csproj", "{8EB7E3D3-8790-4A0C-AD71-366DB605B577}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNoticeProviders", "TestNoticeProviders\TestNoticeProviders.csproj", "{8EB7E3D3-8790-4A0C-AD71-366DB605B577}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeServiceImpl", "NoticeServiceImplementation\NoticeServiceImplementation.csproj", "{564CFA74-05AA-45BD-AC7C-96EDEA9BF0F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeServiceImpl", "NoticeProviderSelector\NoticeProviderSelector.csproj", "{564CFA74-05AA-45BD-AC7C-96EDEA9BF0F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

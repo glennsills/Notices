@@ -12,7 +12,7 @@ namespace Notices.NoticeData {
 
         public string EmailTemplate { get; set; }
 
-        public Mandate Madate {get;set;}
+        public Mandate Mandate {get;set;}
 
     }
 }

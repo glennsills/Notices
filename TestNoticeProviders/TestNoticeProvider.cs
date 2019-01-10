@@ -9,9 +9,9 @@ using Notices.NoticeService;
 
 namespace Notices.TestNotifiers
 {
-    public class TestNotifier : BaseNotifier, ITestNotifier
+    public class TestNoticeProvider : BaseNotifier, ITestNotifier
     {
-        public TestNotifier (ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService) : 
+        public TestNoticeProvider (ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService) : 
             base (logger, emailService, documentService)
         { }
 

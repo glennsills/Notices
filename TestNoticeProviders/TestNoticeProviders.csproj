@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DCNotifier\DCNotifier.csproj" />
-    <ProjectReference Include="..\NoticeService\NoticeService.csproj" />
+    <ProjectReference Include="..\NoticeProvider\NoticeProvider.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

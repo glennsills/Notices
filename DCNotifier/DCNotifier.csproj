@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\NoticeService\NoticeService.csproj" />
+    <ProjectReference Include="..\NoticeProvider\NoticeProvider.csproj" />
     <ProjectReference Include="..\NoticeData\NoticeData.csproj" />
   </ItemGroup>
 

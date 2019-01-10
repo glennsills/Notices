@@ -28,6 +28,8 @@ namespace Notices.NoticeService
             var documentRecord = await CreateNotificationDocument (information);
             if (documentRecord.WasSuccessful)
             {
+                information.EmailParameters.Add("DocumentName", documentRecord.DocumentName);
+                information.EmailParameters.Add("DocumentFilePath", documentRecord.DocumentFilePath);
                 var result = await SendEmail (information);
                 if (result.wasSuccess)
                 {
@@ -36,7 +38,7 @@ namespace Notices.NoticeService
                         WasSuccessful = true,
                             EmailArchiveFilename = result.archiveFile,
                             EmployeeIdentifier = principalIdentifier,
-                            NoticeFilename = documentRecord.DocumentFilePath,
+                            NoticeFilename = documentRecord.DocumentName,
                             ProcessMessage = "Email and Document Sent"
                     };
                 }
@@ -46,7 +48,7 @@ namespace Notices.NoticeService
                     WasSuccessful = false,
                         EmailArchiveFilename = null,
                         EmployeeIdentifier = principalIdentifier,
-                        NoticeFilename = documentRecord.DocumentFilePath,
+                        NoticeFilename = documentRecord.DocumentName,
                         ProcessMessage = "Notice was created but email failed"
                 };
 
@@ -63,12 +65,12 @@ namespace Notices.NoticeService
 
         public abstract Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose);
         public abstract Task<DocumentRecord> CreateNotificationDocument (PrincipalInformation principalInfo);
-        virtual internal async Task < (bool wasSuccess, string archiveFile) > SendEmail (PrincipalInformation principalInformation)
+        virtual protected async Task < (bool wasSuccess, string archiveFile) > SendEmail (PrincipalInformation principalInformation)
         {
             var pathToEmail = await _emailService.SendNoticeEmail(principalInformation.EmailTemplate, 
             principalInformation.EmailAddresses,
             principalInformation.EmailParameters, 
-            principalInformation.Madate);
+            principalInformation.Mandate);
             if ( !string.IsNullOrEmpty(pathToEmail))
             {
                 return (true, pathToEmail);

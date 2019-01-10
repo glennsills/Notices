@@ -2,7 +2,7 @@ using Notices.NoticeService;
 
 namespace Notices.TestNotifiers
 {
-    public interface ITestNotifier : INotify
+    public interface ITestNotifier : INoticeProvider
     {
          
     }

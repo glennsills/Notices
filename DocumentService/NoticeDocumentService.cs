@@ -56,7 +56,8 @@ namespace Notices.DocumentService
             return Task.FromResult (new DocumentRecord
             {
                 DocumentFilePath = outputPath,
-                    WasSuccessful = true
+                DocumentName = Path.GetFileName(outputPath),
+                WasSuccessful = true
             });
         }
 

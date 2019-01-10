@@ -4,7 +4,7 @@ using Notices.NoticeData;
 
 namespace Notices.NoticeService
 {
-    public interface INotify
+    public interface INoticeProvider
     {
         Task<NoticeRecord> Notify (string principalIdentifier, Mandate mandate, string purpose);
 
