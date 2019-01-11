@@ -16,7 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TestNoticeProviders\TestNoticeProviders.csproj" />
-    <ProjectReference Include="..\DCNotifier\DCNotifier.csproj" />
+    <ProjectReference Include="..\DCNoticeProvider\DCNoticeProvider.csproj" />
     <ProjectReference Include="..\NoticeProviderSelector\NoticeProviderSelector.csproj" />
     <ProjectReference Include="..\EmailService\EmailService.csproj" />
     <ProjectReference Include="..\DocumentService\DocumentService.csproj" />

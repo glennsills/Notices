@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeTests", "NoticeTests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmailService", "EmailService\EmailService.csproj", "{2EE10977-BF9F-4307-AD56-C6EF745AA53D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCNotifier", "DCNotifier\DCNotifier.csproj", "{E41B7DCC-675F-4D79-87E0-DD85288CFB12}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCNoticeProvider", "DCNoticeProvider\DCNoticeProvider.csproj", "{E41B7DCC-675F-4D79-87E0-DD85288CFB12}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNoticeProviders", "TestNoticeProviders\TestNoticeProviders.csproj", "{8EB7E3D3-8790-4A0C-AD71-366DB605B577}"
 EndProject

@@ -2,7 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NoticeProvider\NoticeProvider.csproj" />
-    <ProjectReference Include="..\DCNotifier\DCNotifier.csproj" />
+    <ProjectReference Include="..\DCNoticeProvider\DCNoticeProvider.csproj" />
     <ProjectReference Include="..\TestNoticeProviders\TestNoticeProviders.csproj" />
   </ItemGroup>
 

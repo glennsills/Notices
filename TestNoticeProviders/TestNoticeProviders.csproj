@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\DCNotifier\DCNotifier.csproj" />
     <ProjectReference Include="..\NoticeProvider\NoticeProvider.csproj" />
   </ItemGroup>
 
