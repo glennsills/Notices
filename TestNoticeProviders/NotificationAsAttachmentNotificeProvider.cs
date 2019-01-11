@@ -7,7 +7,7 @@ using Notices.EmailService;
 using Notices.NoticeData;
 using Notices.NoticeService;
 
-namespace TestNotifiers
+namespace Notices.TestNotifiers
 {
     public class NotificationAsAttachmentNotificeProvider : BaseNotifier, INoticeProvider
     {
@@ -35,12 +35,27 @@ namespace TestNotifiers
 
         public override Task<DocumentRecord> CreateNotificationDocument(PrincipalInformation principalInfo)
         {
-            throw new System.NotImplementedException();
+            return  _documentService.CreateNoticeDocument(principalInfo, Mandate.TestNotifications);
         }
 
         public override Task<PrincipalInformation> GetPrincipalInformationFromSource(string principalIdentifier, string purpose)
         {
-            throw new System.NotImplementedException();
+            var principalInfo = new PrincipalInformation
+            {
+                EmailAddresses = new List<string>{"someone@somewhere.com"},
+                EmailParameters = new Dictionary<string,string>{
+                     {"Link1HREF", "https://www.google.com"},
+                     {"Link1Title", "Just Google It."},
+                     {"Subject", "Consider just googling it."}
+                },
+                FormParameters = new Dictionary<string, string>{
+                    {"Start of Calendar Year", "2019-01-01"},
+                    {"End of Calendar Year", "2019-12-31"}
+                },
+                DocumentTemplate = "PaidSickLeave-MandatoryNotice-English.pdf",   
+                EmailTemplate = "EmailTemplate.html"            
+            };
+            return Task.FromResult(principalInfo);
         }
 
         public Task<NoticeRecord> Remind(string principalIdentifier, Mandate mandate, Guid notificationId, string alternateEmailAddress)

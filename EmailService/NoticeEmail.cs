@@ -46,9 +46,32 @@ namespace Notices.EmailService
 
         }
 
-        public Task<string> SendNoticeEmailWithAttachments(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, Mandate madate, List<string> attachmentFiles)
+        public async Task<string> SendNoticeEmailWithAttachments(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, Mandate mandate, List<string> attachmentFiles)
         {
-            throw new NotImplementedException();
+            var message = CreateMessage (emailTemplate, emailAddresses, emailParameters, attachmentFiles);
+            var archiveFile = ArchiveMessage (message, GetArchiveFolder(mandate));
+            await SendMessage (message);
+            return archiveFile;
+        }
+
+        private MimeMessage CreateMessage(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, List<string> attachmentFiles)
+        {
+            var body = LoadBody (emailTemplate, emailParameters);
+            var message = new MimeMessage ();
+            message.Sender = GetFromMailboxAddress ();
+            message.From.Add (message.Sender);
+            message.To.AddRange (GetToMailboxAddresses (emailAddresses));
+            message.Subject = GetSubject (emailParameters);
+  
+            var bodyBuilder = new BodyBuilder ();
+            bodyBuilder.HtmlBody = body;
+            foreach(var attachmentFilePath in attachmentFiles)
+            {
+            bodyBuilder.Attachments.Add(attachmentFilePath);
+            }
+
+            message.Body = bodyBuilder.ToMessageBody ();
+            return message;
         }
 
         private string GetArchiveFolder(Mandate mandate)

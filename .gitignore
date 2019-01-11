@@ -568,6 +568,8 @@ __pycache__/
 **/obj
 **/EmailArchiveFolder
 **/ArchiveFolder
+**/DocumentArchive
+
 
 
 

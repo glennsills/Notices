@@ -11,23 +11,21 @@ using Xunit;
 
 namespace NoticeTests.IntegrationTests
 {
-    public class TestNotifierTests
+    public class NoticeAsAttachmentNoticeProviderTests
     {
         private NoticeDocumentService _documentService;
         private NoticeEmail _emailService;
 
-        public TestNotifierTests ()
+        public NoticeAsAttachmentNoticeProviderTests ()
         {
             _documentService = new NoticeDocumentService (null, new FileSystem (), GetDocumentOptions());
             _emailService = new NoticeEmail (GetEmailOptions (), null, new FileSystem ());
         }
 
-
-
         [Fact(DisplayName="Notify Stores Document and Email")]
         public async Task NotifyStoresDocumentAndEmail ()
         {
-            var cut = new TestNoticeProvider(null,_emailService, _documentService);
+            var cut = new NotificationAsAttachmentNotificeProvider(null,_emailService, _documentService);
             var actual = await cut.Notify("123456789", Mandate.TestNotifications, "Initial");
             Assert.True(actual.WasSuccessful);
         }
