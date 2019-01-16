@@ -1,6 +1,6 @@
-namespace Notices.BlobStorageService
+namespace Notices.NoticeStorage
 {
-    public class BlobStorageOptions
+    public class NoticeStorageOptions
     {
         public string ConnectionString {get;set;}
         public string ApplicationName {get;set;}

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Notices.DocumentService;
 using Notices.EmailService;
 using Notices.NoticeData;
+using Notices.NoticeStorage;
 using Notices.TestNotifiers;
 using Xunit;
 
@@ -18,32 +19,40 @@ namespace NoticeTests.IntegrationTests
 
         public TestNoticeProviderTests ()
         {
-            _documentService = new NoticeDocumentService (null, new FileSystem (), GetDocumentOptions());
-            _emailService = new NoticeEmail (GetEmailOptions (), null, new FileSystem ());
+            var noticeStorageOptions = Options.Create<NoticeStorageOptions> (
+                new NoticeStorageOptions
+                {
+                    ConnectionString = "UseDevelopmentStorage=true",
+                        ApplicationName = "notice"
+                });
+
+            var noticeStorageService = new NoticeStorageService (noticeStorageOptions, null);
+            
+            _documentService = new NoticeDocumentService (null, new FileSystem (),noticeStorageService, GetDocumentOptions ());
+            _emailService = new NoticeEmail (GetEmailOptions (), null, noticeStorageService, new FileSystem ());
         }
 
-        [Fact(DisplayName="Notify Stores Document and Email")]
+        [Fact (DisplayName = "Notify Stores Document and Email")]
         public async Task NotifyStoresDocumentAndEmail ()
         {
-            var cut = new TestNoticeProvider(null,_emailService, _documentService);
-            var actual = await cut.Notify("123456789", Mandate.TestNotifications, "Initial");
-            Assert.True(actual.WasSuccessful);
+            var cut = new TestNoticeProvider (null, _emailService, _documentService);
+            var actual = await cut.Notify ("123456789", Mandate.TestNotifications, "Initial");
+            Assert.True (actual.WasSuccessful);
         }
 
-        private IOptions<DocumentServiceOptions> GetDocumentOptions()
+        private IOptions<DocumentServiceOptions> GetDocumentOptions ()
         {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-            return Options.Create<DocumentServiceOptions>( new DocumentServiceOptions
+            return Options.Create<DocumentServiceOptions> (new DocumentServiceOptions
             {
-                ArchiveDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests\DocumentArchive"),
-                TemplateDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests")
+                ArchiveDirectory = Path.Combine (dir, @"..\..\..\IntegrationTests\DocumentArchive"),
+                    TemplateDirectory = Path.Combine (dir, @"..\..\..\IntegrationTests")
             });
         }
 
         private IOptions<NoticeEmailOptions> GetEmailOptions ()
         {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-
 
             return Options.Create<NoticeEmailOptions> (
                 new NoticeEmailOptions

@@ -29,7 +29,13 @@ namespace Notices.NoticeService
             if (documentRecord.WasSuccessful)
             {
                 information.EmailParameters.Add("DocumentName", documentRecord.DocumentName);
-                information.EmailParameters.Add("DocumentFilePath", documentRecord.DocumentFilePath);
+                information.EmailAttachments.Add(
+                    new EmailAttachment
+                    {
+                        DisplayName = documentRecord.DocumentName,
+                        StorageName = documentRecord.DocumentName,
+                    }
+                );
                 var result = await SendEmail (information);
                 if (result.wasSuccess)
                 {
@@ -69,8 +75,7 @@ namespace Notices.NoticeService
         {
             var pathToEmail = await _emailService.SendNoticeEmail(principalInformation.EmailTemplate, 
             principalInformation.EmailAddresses,
-            principalInformation.EmailParameters, 
-            principalInformation.Mandate);
+            principalInformation.EmailParameters);
             if ( !string.IsNullOrEmpty(pathToEmail))
             {
                 return (true, pathToEmail);

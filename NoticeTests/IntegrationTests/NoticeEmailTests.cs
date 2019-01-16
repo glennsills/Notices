@@ -11,6 +11,7 @@ using Notices.EmailService;
 using Notices.NoticeData;
 using Notices.NoticeService;
 using Notices.NoticeServiceImplementation;
+using Notices.NoticeStorage;
 using Notices.TestNotifiers;
 using Xunit;
 
@@ -20,6 +21,7 @@ namespace Notices.NoticeTests.IntegrationTests
     {
         private readonly string _emailTemplate;
         private readonly IOptions<NoticeEmailOptions> _testOptions;
+        private NoticeStorageService _noticeStorageService;
 
         public NoticeEmailTests ()
         {
@@ -36,6 +38,15 @@ namespace Notices.NoticeTests.IntegrationTests
                         SmtpHost = "127.0.0.1",
                         SmtpPort = 0
                 });
+
+            var noticeStorageOptions = Options.Create<NoticeStorageOptions>( 
+            new NoticeStorageOptions{
+                ConnectionString = "UseDevelopmentStorage=true",
+                ApplicationName = "notice"
+            });
+
+            _noticeStorageService = new NoticeStorageService(noticeStorageOptions, null);
+
         }
 
         [Fact]
@@ -48,11 +59,11 @@ namespace Notices.NoticeTests.IntegrationTests
                     { "Subject", "%%Reminder%%Subject with %%Link1Title%%" }
                 };
 
-            var cut = new NoticeEmail (_testOptions, null, new FileSystem ());
+            var cut = new NoticeEmail (_testOptions, null,_noticeStorageService, new FileSystem ());
 
-            var archiveFile =  await cut.SendNoticeEmail (_emailTemplate, recipients, parameters,Mandate.TestNotifications );
+            var archiveFile =  await cut.SendNoticeEmail (_emailTemplate, recipients, parameters );
             
-            Assert.True(File.Exists(archiveFile)); 
+            Assert.NotNull(archiveFile);
 
         }
     }

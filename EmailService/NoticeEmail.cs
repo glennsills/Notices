@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using Notices.NoticeData;
+using Notices.NoticeStorage;
 
 namespace Notices.EmailService
 {
@@ -24,37 +25,42 @@ namespace Notices.EmailService
         protected const string MandateArchiveFoldernameError = @"Please define NoticeEmailOptions.EmailArchiveFolder 
         in configuration";
         private const string ParamDelimiter = "%%";
-        protected NoticeEmailOptions _options;
-        protected ILogger<NoticeEmail> _logger;
-        protected IFileSystem _fileSystem;
+        private NoticeEmailOptions _options;
+        private ILogger<NoticeEmail> _logger;
+        private IFileSystem _fileSystem;
+        private INoticeStorage _noticeStorage;
 
-        public NoticeEmail (IOptions<NoticeEmailOptions> options, ILogger<NoticeEmail> logger, IFileSystem fileSystem)
+        public NoticeEmail (IOptions<NoticeEmailOptions> options, ILogger<NoticeEmail> logger, INoticeStorage noticeStorage, IFileSystem fileSystem)
         {
             _options = options.Value;
             _logger = logger;
             _fileSystem = fileSystem;
+            _noticeStorage = noticeStorage;
         }
         public async Task<string> SendNoticeEmail (string templateFilename,
             List<string> recipients,
-            Dictionary<string, string> parameters,
-            Mandate mandate)
+            Dictionary<string, string> parameters)
         {
             var message = CreateMessage (templateFilename, recipients, parameters);
-            var archiveFile = ArchiveMessage (message, GetArchiveFolder(mandate));
+            var archiveFile = await ArchiveMessage (message);
             await SendMessage (message);
             return archiveFile;
 
         }
 
-        public async Task<string> SendNoticeEmailWithAttachments(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, Mandate mandate, List<string> attachmentFiles)
+        public async Task<string> SendNoticeEmailWithAttachments (
+            string emailTemplate,
+            List<string> emailAddresses,
+            Dictionary<string, string> emailParameters,
+            List<EmailAttachment> attachmentFiles)
         {
-            var message = CreateMessage (emailTemplate, emailAddresses, emailParameters, attachmentFiles);
-            var archiveFile = ArchiveMessage (message, GetArchiveFolder(mandate));
+            var message = await CreateMessage (emailTemplate, emailAddresses, emailParameters, attachmentFiles);
+            var archiveFile = await ArchiveMessage (message);
             await SendMessage (message);
             return archiveFile;
         }
 
-        private MimeMessage CreateMessage(string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, List<string> attachmentFiles)
+        private  async Task<MimeMessage> CreateMessage (string emailTemplate, List<string> emailAddresses, Dictionary<string, string> emailParameters, List<EmailAttachment> attachments)
         {
             var body = LoadBody (emailTemplate, emailParameters);
             var message = new MimeMessage ();
@@ -62,21 +68,17 @@ namespace Notices.EmailService
             message.From.Add (message.Sender);
             message.To.AddRange (GetToMailboxAddresses (emailAddresses));
             message.Subject = GetSubject (emailParameters);
-  
+
             var bodyBuilder = new BodyBuilder ();
             bodyBuilder.HtmlBody = body;
-            foreach(var attachmentFilePath in attachmentFiles)
+            foreach (var attachment in attachments)
             {
-            bodyBuilder.Attachments.Add(attachmentFilePath);
+                bodyBuilder.Attachments.Add(attachment.DisplayName,
+                await _noticeStorage.GetFileStream(attachment.StorageName));
             }
 
             message.Body = bodyBuilder.ToMessageBody ();
             return message;
-        }
-
-        private string GetArchiveFolder(Mandate mandate)
-        {
-            return Path.Combine(_options.EmailArchiveFolder, mandate.ToString());
         }
 
         internal MimeMessage CreateMessage (string templateFilename, List<string> recipients, Dictionary<string, string> parameters)
@@ -113,13 +115,20 @@ namespace Notices.EmailService
 
         }
 
-        internal string ArchiveMessage (MimeMessage message, string mandateArchiveFoldername)
+        internal async Task<string> ArchiveMessage (MimeMessage message)
         {
-            string completeFilePath = GetCompleteFilename (mandateArchiveFoldername);
+            string filename = $"{Guid.NewGuid().ToString("N")}.eml";
             try
             {
-                message.WriteTo (completeFilePath);
-                return completeFilePath;
+                var memoryStream = new MemoryStream ();
+
+                message.WriteTo (memoryStream);
+
+                memoryStream.Seek (0, SeekOrigin.Begin);
+
+                await _noticeStorage.UploadFileFromStream (filename, memoryStream);
+
+                return filename;
             }
             catch (Exception ex)
             {
@@ -240,7 +249,6 @@ namespace Notices.EmailService
 
             return templateString;
         }
-
 
     }
 }

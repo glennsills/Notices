@@ -25,42 +25,8 @@ namespace Notices.NoticeTests.UnitTests
             });
         }
 
-        [Fact (DisplayName = "EnsureFolder Returns Path")]
-        public void EnsureFolderReturnsFolderPath ()
-        {
-            IOptions<NoticeEmailOptions> testOptions = Options.Create<NoticeEmailOptions> (
-                new NoticeEmailOptions
-                {
-                    EmailArchiveFolder = @"c:\approot\emailarchive"
-                });
 
-            string expected = @"c:\approot\emailarchive\testfolder";
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
-            var actual = cut.EnsureFolder ("testfolder");
-            Assert.Equal (expected, actual);
-        }
-
-        [Fact (DisplayName = "Missing EmailArchiveFolder Option")]
-        public void EnsureFolderThrowsExceptionWhenNoEmailArchiveOptions ()
-        {
-            var testOptions = Options.Create<NoticeEmailOptions> (new NoticeEmailOptions ());
-
-            var expected = typeof (EmailServiceException);
-            Type actual = null;
-
-            try
-            {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
-                cut.EnsureFolder ("testfolder");
-            }
-            catch (Exception ex)
-            {
-                actual = ex.GetType ();
-            }
-
-            Assert.Equal (expected, actual);
-        }
-
+ 
         [Fact (DisplayName = "Missing Template Folder Option")]
         public void LoadTemplateThrowsExceptionWhenMessingTemplateFolderOption ()
         {
@@ -70,7 +36,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null,null, fileSystem);
                 cut.LoadTemplate ("testfolder");
             }
             catch (Exception ex)
@@ -90,7 +56,7 @@ namespace Notices.NoticeTests.UnitTests
 
             string expected = testHtml;
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null,null, fileSystem);
             var actual = cut.LoadTemplate ("testtemplate.html");
             Assert.Equal (expected, actual);
         }
@@ -109,7 +75,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.LoadTemplate ("BadFile.html");
             }
             catch (Exception ex)
@@ -130,7 +96,7 @@ namespace Notices.NoticeTests.UnitTests
                 };
 
             var expected = "token1=token1, token2=token2, token3=token3";
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.ReplaceParameters (template, parameters);
             Assert.Equal (expected, actual);
         }
@@ -151,7 +117,7 @@ namespace Notices.NoticeTests.UnitTests
                     { "LinkTitle", "LinkTitle" }
                 };
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.LoadBody ("testtemplate.html", parameters);
             Assert.Equal (expected, actual, true, true);
         }
@@ -169,7 +135,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetFromMailboxAddress ();
             }
             catch (Exception ex)
@@ -192,7 +158,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetFromMailboxAddress ();
             }
             catch (Exception ex)
@@ -211,7 +177,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetFromMailboxAddress ();
             }
             catch (Exception ex)
@@ -232,7 +198,7 @@ namespace Notices.NoticeTests.UnitTests
 
             var expected = new MailboxAddress (testOptions.Value.EmailSenderName, testOptions.Value.EmailSenderAddress);
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.GetFromMailboxAddress ();
 
             Assert.Equal (expected, actual);
@@ -247,7 +213,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetToMailboxAddresses (new List<string> ());
             }
             catch (Exception ex)
@@ -266,7 +232,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetToMailboxAddresses (null);
             }
             catch (Exception ex)
@@ -292,7 +258,7 @@ namespace Notices.NoticeTests.UnitTests
 
             };
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null,  fileSystem);
             var actual = cut.GetToMailboxAddresses (recipientList);
 
             Assert.Equal (expected, actual);
@@ -308,7 +274,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetSubject (null);
             }
             catch (Exception ex)
@@ -328,7 +294,7 @@ namespace Notices.NoticeTests.UnitTests
             Type actual = null;
             try
             {
-                var cut = new NoticeEmail (testOptions, null, fileSystem);
+                var cut = new NoticeEmail (testOptions, null, null, fileSystem);
                 cut.GetSubject (parameters);
             }
             catch (Exception ex)
@@ -346,7 +312,7 @@ namespace Notices.NoticeTests.UnitTests
 
             var expected = parameters["Subject"];
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.GetSubject (parameters);
 
             Assert.Equal (expected, actual);
@@ -362,7 +328,7 @@ namespace Notices.NoticeTests.UnitTests
 
             var expected = "Reminder - Subject with replacement1 and replacement2";
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null,  fileSystem);
             var actual = cut.GetSubject (parameters);
 
             Assert.Equal (expected, actual);
@@ -378,7 +344,7 @@ namespace Notices.NoticeTests.UnitTests
 
             var expected = "Subject with replacement1 and replacement2";
 
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.GetSubject (parameters);
 
             Assert.Equal (expected, actual);
@@ -390,7 +356,7 @@ namespace Notices.NoticeTests.UnitTests
             var testOptions = Options.Create<NoticeEmailOptions> (new NoticeEmailOptions ());
             var templateString = "This is a template with a %%Parameters%%";
             var expected = "This is a template with a ";
-            var cut = new NoticeEmail (testOptions, null, fileSystem);
+            var cut = new NoticeEmail (testOptions, null, null, fileSystem);
             var actual = cut.RemoveMissingParameters (templateString);
 
             Assert.Equal (expected, actual);

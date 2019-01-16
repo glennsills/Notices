@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Notices.DocumentService;
 using Notices.NoticeData;
 using Notices.NoticeService;
+using Notices.NoticeStorage;
 using Xunit;
 
 namespace Notices.NoticeTests.IntegrationTests {
@@ -14,6 +15,7 @@ namespace Notices.NoticeTests.IntegrationTests {
         private string _templateDirectory;
         private string _documentArchiveDirectory;
         private PrincipalInformation _principalInformation;
+        private NoticeStorageService _noticeStorageService;
 
         public DocumentServiceTests () {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
@@ -28,17 +30,23 @@ namespace Notices.NoticeTests.IntegrationTests {
                     { "End of Calendar Year", "2019-12-31" }
                 }
             };
+            var noticeStorageOptions = Options.Create<NoticeStorageOptions>( 
+            new NoticeStorageOptions{
+                ConnectionString = "UseDevelopmentStorage=true",
+                ApplicationName = "notice"
+            });
 
+            _noticeStorageService = new NoticeStorageService(noticeStorageOptions, null);
         }
 
         [Fact]
         public async Task CreateNoticeDocumentCreatesSimpleDocument () {
-            IDocumentService cut = new NoticeDocumentService (null, new FileSystem (), GetDocumentOptions ());
+            IDocumentService cut = new NoticeDocumentService (null, new FileSystem (), _noticeStorageService, GetDocumentOptions ());
             var actual = await cut.CreateNoticeDocument (
                 _principalInformation,
                 Mandate.TestNotifications);
 
-            Assert.True (File.Exists (actual.DocumentFilePath));
+            Assert.True(actual.WasSuccessful);
         }
 
         private IOptions<DocumentServiceOptions> GetDocumentOptions () {

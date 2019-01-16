@@ -9,79 +9,72 @@ using iText.Kernel.Pdf;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Notices.NoticeData;
-
+using Notices.NoticeStorage;
 
 namespace Notices.DocumentService
 {
     public class NoticeDocumentService : IDocumentService
     {
         private IFileSystem _fileSystem;
+        private INoticeStorage _noticeStorage;
         private ILogger<NoticeDocumentService> _logger;
         private DocumentServiceOptions _options;
 
-        public NoticeDocumentService (ILogger<NoticeDocumentService> logger, IFileSystem fileSystem, IOptions<DocumentServiceOptions> options)
+        public NoticeDocumentService (
+            ILogger<NoticeDocumentService> logger,
+            IFileSystem fileSystem,
+            INoticeStorage noticeStorage,
+            IOptions<DocumentServiceOptions> options)
         {
             _fileSystem = fileSystem;
+            _noticeStorage = noticeStorage;
             _logger = logger;
             _options = options.Value;
         }
 
-        public Task<DocumentRecord> CreateNoticeDocument (
+        public async Task<DocumentRecord> CreateNoticeDocument (
             PrincipalInformation principalInformation,
             Mandate mandate)
         {
 
             var templatePath = GetFullPathToPDFForm (principalInformation.DocumentTemplate, _options.TemplateDirectory);
-            var outputPath = GetFullDocumentArchivePath (_options.ArchiveDirectory, mandate);
-
-            PdfDocument pdf = new PdfDocument (new PdfReader (templatePath), new PdfWriter (outputPath));
-            PdfAcroForm form = PdfAcroForm.GetAcroForm (pdf, true);
-            IDictionary<String, PdfFormField> fields = form.GetFormFields ();
+            var outputName = $"{Guid.NewGuid().ToString("N")}.pdf";
+            var memorystream = new MemoryStream ();
+            var outputWriter = new PdfWriter (memorystream);
+            outputWriter.SetCloseStream(false);
+            
+            var pdf = new PdfDocument (new PdfReader (templatePath), outputWriter);
+            var form = PdfAcroForm.GetAcroForm (pdf, true);
+            var fields = form.GetFormFields ();
             PdfFormField toSet;
 
-            foreach(var valuePair in principalInformation.FormParameters)
+            foreach (var valuePair in principalInformation.FormParameters)
             {
                 if (fields.TryGetValue (valuePair.Key, out toSet))
                 {
-                    toSet.SetValue(valuePair.Value);
+                    toSet.SetValue (valuePair.Value);
                 }
-                else {
-                    throw new DocumentServiceException($"Key {valuePair.Key} does not exist in form parameters");
+                else
+                {
+                    throw new DocumentServiceException ($"Key {valuePair.Key} does not exist in form parameters");
                 }
             }
 
             form.FlattenFields ();
             pdf.Close ();
+            memorystream.Seek(0, SeekOrigin.Begin);
+            await _noticeStorage.UploadFileFromStream(outputName, memorystream);
 
-            return Task.FromResult (new DocumentRecord
+            return new DocumentRecord
             {
-                DocumentFilePath = outputPath,
-                DocumentName = Path.GetFileName(outputPath),
-                WasSuccessful = true
-            });
-        }
-
-        internal string GetFullDocumentArchivePath (string documentOutputFolder, Mandate mandate)
-        {
-            var basepath= EnsureArchiveFolder(documentOutputFolder, mandate);
-            var filename = $"{Guid.NewGuid().ToString("N")}.pdf";
-            return Path.Combine(basepath, filename);
-        }
-
-        internal string EnsureArchiveFolder(string documentOutputFolder, Mandate mandate)
-        {
-            var folderPath = Path.Combine(documentOutputFolder, mandate.ToString());
-            var di = _fileSystem.DirectoryInfo.FromDirectoryName(folderPath);
-            if (!di.Exists)
-            {
-                di.Create();
-            }
-            return folderPath;
+                    DocumentName = outputName,
+                    WasSuccessful = true
+            };
         }
 
         internal string GetFullPathToPDFForm (string templateName, string documentTemplateFolder)
         {
-            return Path.Combine(documentTemplateFolder, templateName);
+            return Path.Combine (documentTemplateFolder, templateName);
         }
     }
 }

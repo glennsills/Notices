@@ -17,9 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestNoticeProviders", "Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeServiceImpl", "NoticeProviderSelector\NoticeProviderSelector.csproj", "{564CFA74-05AA-45BD-AC7C-96EDEA9BF0F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoticeTracker", "NoticeTracker\NoticeTracker.csproj", "{5CB36E8A-0B31-49D4-9C57-8FE606EEF560}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobStorageService", "BlobStorageService\BlobStorageService.csproj", "{E63ECD57-8C2C-42FB-AE99-D98AB1924138}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlobStorageService", "NoticeStorage\NoticeStorage.csproj", "{E63ECD57-8C2C-42FB-AE99-D98AB1924138}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

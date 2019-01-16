@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Notices.DocumentService;
 using Notices.EmailService;
 using Notices.NoticeData;
+using Notices.NoticeStorage;
 using Notices.TestNotifiers;
 using Xunit;
 
@@ -18,8 +19,15 @@ namespace NoticeTests.IntegrationTests
 
         public NoticeAsAttachmentNoticeProviderTests ()
         {
-            _documentService = new NoticeDocumentService (null, new FileSystem (), GetDocumentOptions());
-            _emailService = new NoticeEmail (GetEmailOptions (), null, new FileSystem ());
+            var noticeStorageOptions = Options.Create<NoticeStorageOptions>( 
+            new NoticeStorageOptions{
+                ConnectionString = "UseDevelopmentStorage=true",
+                ApplicationName = "notice"
+            });
+
+            var noticeStorageService = new NoticeStorageService(noticeStorageOptions, null);
+            _documentService = new NoticeDocumentService (null, new FileSystem (), noticeStorageService, GetDocumentOptions());
+            _emailService = new NoticeEmail (GetEmailOptions (), null, noticeStorageService, new FileSystem ());
         }
 
         [Fact(DisplayName="Notify Stores Document and Email")]

@@ -8,27 +8,34 @@ using Notices.NoticeData;
 using System.IO;
 using System.Net;
 
-namespace Notices.BlobStorageService
+namespace Notices.NoticeStorage
 {
-    public class BlobStorage : IBlobStorage
+    public class NoticeStorageService : INoticeStorage
     {
-        private BlobStorageOptions _options;
-        private readonly ILogger<BlobStorage> _logger;
+        private NoticeStorageOptions _options;
+        private readonly ILogger<NoticeStorageService> _logger;
 
-        public BlobStorage (IOptions<BlobStorageOptions> options, ILogger<BlobStorage> logger)
+        public NoticeStorageService (IOptions<NoticeStorageOptions> options, ILogger<NoticeStorageService> logger)
         {
             _options = options.Value;
             _logger = logger;
         }
 
-        public async Task UploadFile (Mandate mandate, BlobUsage blobUsage, string sourceFilePath)
+        public async Task UploadFileFromStream (string fileName, Stream inputStream)
         {
-            var container = await GetCloudContainer (mandate, blobUsage);
-            var cloudBlockBlob = container.GetBlockBlobReference(GetBlobName(mandate, blobUsage,Path.GetFileName(sourceFilePath)));
-            await cloudBlockBlob.UploadFromFileAsync(sourceFilePath);
+            var container = await GetCloudContainer ();
+            var cloudBlockBlob = container.GetBlockBlobReference(fileName);
+            await cloudBlockBlob.UploadFromStreamAsync(inputStream);
         }
 
-        private async Task<CloudBlobContainer> GetCloudContainer (Mandate mandate, BlobUsage blobUsage)
+        public async Task<Stream> GetFileStream(string fileName)
+        {
+            var container = await GetCloudContainer ();
+            var cloudBlockBlob = container.GetBlockBlobReference(fileName);
+            return await cloudBlockBlob.OpenReadAsync();
+        }
+
+        private async Task<CloudBlobContainer> GetCloudContainer ()
         {
             CloudStorageAccount.TryParse (_options.ConnectionString, out var storageAccount);
 
@@ -44,10 +51,6 @@ namespace Notices.BlobStorageService
             return cloudBlobContainer;
         }
 
-        private string GetBlobName (Mandate mandate, BlobUsage blobUsage, string fileName)
-        {
-            return $"{mandate.ToString()}/{blobUsage.ToString()}/{fileName}" ;
-            
-        }
+
     }
 }

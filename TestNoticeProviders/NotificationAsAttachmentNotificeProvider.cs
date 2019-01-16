@@ -22,8 +22,7 @@ namespace Notices.TestNotifiers
             var pathToEmail = await _emailService.SendNoticeEmailWithAttachments(principalInformation.EmailTemplate, 
             principalInformation.EmailAddresses,
             principalInformation.EmailParameters, 
-            principalInformation.Mandate,
-            new List<string>{principalInformation.EmailParameters["DocumentFilePath"]});
+            principalInformation.EmailAttachments);
 
             if ( !string.IsNullOrEmpty(pathToEmail))
             {
