@@ -6,13 +6,14 @@ using Notices.DocumentService;
 using Notices.EmailService;
 using Notices.NoticeData;
 using Notices.NoticeService;
+using Notices.NoticeStorage;
 
 namespace Notices.TestNotifiers
 {
-    public class TestNoticeProvider : BaseNotifier, ITestNotifier
+    public class TestNoticeProvider : BaseNoticeProvider, ITestNotifier
     {
-        public TestNoticeProvider (ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService) : 
-            base (logger, emailService, documentService)
+        public TestNoticeProvider (ILogger<BaseNoticeProvider> logger, INoticeEmail emailService, IDocumentService documentService, INoticeStorage storageService) : 
+            base (logger, emailService, documentService, storageService)
         { }
 
 
@@ -21,11 +22,11 @@ namespace Notices.TestNotifiers
             throw new NotImplementedException ();
         }
 
-        override public Task<PrincipalInformation> GetPrincipalInformationFromSource (string principalIdentifier, string purpose)
+        override public Task<ProcessingInformation> GetProcessingInformationFromSource (string principalIdentifier, string purpose)
         {
             // Normall this information would come from a data source injected into the cstor
 
-            var principalInfo = new PrincipalInformation
+            var principalInfo = new ProcessingInformation
             {
                 EmailAddresses = new List<string>{"someone@somewhere.com"},
                 EmailParameters = new Dictionary<string,string>{
@@ -48,7 +49,7 @@ namespace Notices.TestNotifiers
             throw new NotImplementedException();
         }
 
-        public override Task<DocumentRecord> CreateNotificationDocument(PrincipalInformation principalInfo)
+        public override Task<DocumentRecord> CreateNotificationDocument(ProcessingInformation principalInfo)
         {
            return  _documentService.CreateNoticeDocument(principalInfo, Mandate.TestNotifications);
         }

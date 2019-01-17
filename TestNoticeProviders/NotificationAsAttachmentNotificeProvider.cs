@@ -6,18 +6,19 @@ using Notices.DocumentService;
 using Notices.EmailService;
 using Notices.NoticeData;
 using Notices.NoticeService;
+using Notices.NoticeStorage;
 
 namespace Notices.TestNotifiers
 {
-    public class NotificationAsAttachmentNotificeProvider : BaseNotifier, INoticeProvider
+    public class NotificationAsAttachmentNotificeProvider : BaseNoticeProvider, INoticeProvider
     {
-        public NotificationAsAttachmentNotificeProvider(ILogger<BaseNotifier> logger, INoticeEmail emailService, IDocumentService documentService) : 
-            base (logger, emailService, documentService)
+        public NotificationAsAttachmentNotificeProvider(ILogger<BaseNoticeProvider> logger, INoticeEmail emailService, IDocumentService documentService, INoticeStorage storageService) : 
+            base (logger, emailService, documentService,storageService)
         {          
         }
 
 
-        protected async override Task<(bool wasSuccess, string archiveFile)> SendEmail(PrincipalInformation principalInformation)
+        protected async override Task<(bool wasSuccess, string archiveFile)> SendEmail(ProcessingInformation principalInformation)
         {
             var pathToEmail = await _emailService.SendNoticeEmailWithAttachments(principalInformation.EmailTemplate, 
             principalInformation.EmailAddresses,
@@ -32,14 +33,14 @@ namespace Notices.TestNotifiers
         }
         
 
-        public override Task<DocumentRecord> CreateNotificationDocument(PrincipalInformation principalInfo)
+        public override Task<DocumentRecord> CreateNotificationDocument(ProcessingInformation principalInfo)
         {
             return  _documentService.CreateNoticeDocument(principalInfo, Mandate.TestNotifications);
         }
 
-        public override Task<PrincipalInformation> GetPrincipalInformationFromSource(string principalIdentifier, string purpose)
+        public override Task<ProcessingInformation> GetProcessingInformationFromSource(string principalIdentifier, string purpose)
         {
-            var principalInfo = new PrincipalInformation
+            var principalInfo = new ProcessingInformation
             {
                 EmailAddresses = new List<string>{"someone@somewhere.com"},
                 EmailParameters = new Dictionary<string,string>{

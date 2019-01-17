@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Notices.NoticeData
 {
-    public class PrincipalInformation
+    public class ProcessingInformation
     {
         public List<string> EmailAddresses { get; set; }
 

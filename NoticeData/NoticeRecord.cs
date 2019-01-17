@@ -1,4 +1,4 @@
-namespace Notices.NoticeService
+namespace Notices.NoticeData
 {
     public class NoticeRecord
     {
@@ -6,9 +6,9 @@ namespace Notices.NoticeService
 
         public string EmployeeIdentifier {get;set;}
 
-        public string NoticeFilename {get;set;}
+        public string NoticeStorageName {get;set;}
 
-        public string EmailArchiveFilename {get;set;}
+        public string EmailStorageName {get;set;}
 
         public string ProcessMessage {get;set;}
     }

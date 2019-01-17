@@ -6,7 +6,7 @@ using Notices.NoticeStorage;
 using Notices.NoticeData;
 using Xunit;
 
-namespace NoticeTests.IntegrationTests
+namespace Notices.NoticeTests.IntegrationTests
 {
     public class NoticeStorageServiceTests
     {

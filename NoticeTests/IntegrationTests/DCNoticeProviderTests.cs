@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Abstractions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Notices.DCNotifier;
 using Notices.DocumentService;
 using Notices.EmailService;
 using Notices.NoticeData;
@@ -12,47 +13,48 @@ using Xunit;
 
 namespace Notices.NoticeTests.IntegrationTests
 {
-    public class NoticeAsAttachmentNoticeProviderTests
+    public class DCNoticeProviderTests
     {
         private NoticeStorageService _noticeStorageService;
         private NoticeDocumentService _documentService;
         private NoticeEmail _emailService;
 
-        public NoticeAsAttachmentNoticeProviderTests ()
+        public DCNoticeProviderTests ()
         {
-            var noticeStorageOptions = Options.Create<NoticeStorageOptions>( 
-            new NoticeStorageOptions{
-                ConnectionString = "UseDevelopmentStorage=true",
-                ApplicationName = "notice"
-            });
+            var noticeStorageOptions = Options.Create<NoticeStorageOptions> (
+                new NoticeStorageOptions
+                {
+                    ConnectionString = "UseDevelopmentStorage=true",
+                        ApplicationName = "notice"
+                });
 
-            _noticeStorageService = new NoticeStorageService(noticeStorageOptions, null);
-            _documentService = new NoticeDocumentService (null, new FileSystem (), _noticeStorageService, GetDocumentOptions());
+            _noticeStorageService = new NoticeStorageService (noticeStorageOptions, null);
+            
+            _documentService = new NoticeDocumentService (null, new FileSystem (),_noticeStorageService, GetDocumentOptions ());
             _emailService = new NoticeEmail (GetEmailOptions (), null, _noticeStorageService, new FileSystem ());
         }
 
-        [Fact(DisplayName="Notify Stores Document and Email")]
+        [Fact (DisplayName = "Notify Stores Document and Email")]
         public async Task NotifyStoresDocumentAndEmail ()
         {
-            var cut = new NotificationAsAttachmentNotificeProvider(null,_emailService, _documentService, _noticeStorageService);
-            var actual = await cut.Notify("123456789", Mandate.TestNotifications, "Initial");
-            Assert.True(actual.WasSuccessful);
+            var cut = new DCWageNotifier (null, _emailService, _documentService, _noticeStorageService);
+            var actual = await cut.Notify ("123456789", Mandate.TestNotifications, "Initial");
+            Assert.True (actual.WasSuccessful);
         }
 
-        private IOptions<DocumentServiceOptions> GetDocumentOptions()
+        private IOptions<DocumentServiceOptions> GetDocumentOptions ()
         {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-            return Options.Create<DocumentServiceOptions>( new DocumentServiceOptions
+            return Options.Create<DocumentServiceOptions> (new DocumentServiceOptions
             {
-                ArchiveDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests\DocumentArchive"),
-                TemplateDirectory = Path.Combine(dir, @"..\..\..\IntegrationTests")
+                ArchiveDirectory = Path.Combine (dir, @"..\..\..\IntegrationTests\DocumentArchive"),
+                    TemplateDirectory = Path.Combine (dir, @"..\..\..\IntegrationTests")
             });
         }
 
         private IOptions<NoticeEmailOptions> GetEmailOptions ()
         {
             var dir = AppDomain.CurrentDomain.BaseDirectory;
-
 
             return Options.Create<NoticeEmailOptions> (
                 new NoticeEmailOptions

@@ -35,6 +35,12 @@ namespace Notices.NoticeStorage
             return await cloudBlockBlob.OpenReadAsync();
         }
 
+        public void SaveNoticeRecord(NoticeRecord noticeRecord)
+        {
+            throw new NotImplementedException();
+        }
+
+       
         private async Task<CloudBlobContainer> GetCloudContainer ()
         {
             CloudStorageAccount.TryParse (_options.ConnectionString, out var storageAccount);

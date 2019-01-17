@@ -6,7 +6,7 @@ namespace Notices.DocumentService
     public interface IDocumentService
     {
         Task<DocumentRecord> CreateNoticeDocument(
-             PrincipalInformation principalInformation, 
+             ProcessingInformation principalInformation, 
              Mandate mandate);
     }
 }

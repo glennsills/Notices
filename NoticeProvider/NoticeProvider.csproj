@@ -4,6 +4,7 @@
     <ProjectReference Include="..\EmailService\EmailService.csproj" />
     <ProjectReference Include="..\DocumentService\DocumentService.csproj" />
     <ProjectReference Include="..\noticedata\NoticeData.csproj" />
+    <ProjectReference Include="..\NoticeStorage\NoticeStorage.csproj" />
   </ItemGroup>
 
   <ItemGroup>

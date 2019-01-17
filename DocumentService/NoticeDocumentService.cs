@@ -33,7 +33,7 @@ namespace Notices.DocumentService
         }
 
         public async Task<DocumentRecord> CreateNoticeDocument (
-            PrincipalInformation principalInformation,
+            ProcessingInformation principalInformation,
             Mandate mandate)
         {
 
