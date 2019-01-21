@@ -14,11 +14,13 @@ namespace Notices.NoticeStorage
     {
         private NoticeStorageOptions _options;
         private readonly ILogger<NoticeStorageService> _logger;
+        private readonly NoticeRecordRepository _noticeRecordRepository;
 
         public NoticeStorageService (IOptions<NoticeStorageOptions> options, ILogger<NoticeStorageService> logger)
         {
             _options = options.Value;
             _logger = logger;
+            _noticeRecordRepository = new NoticeRecordRepository(options); //todo make this injectable
         }
 
         public async Task UploadFileFromStream (string fileName, Stream inputStream)
@@ -35,9 +37,9 @@ namespace Notices.NoticeStorage
             return await cloudBlockBlob.OpenReadAsync();
         }
 
-        public void SaveNoticeRecord(NoticeRecord noticeRecord)
+        public async Task SaveNoticeRecord(NoticeRecord noticeRecord)
         {
-            throw new NotImplementedException();
+            await _noticeRecordRepository.SaveRecord(noticeRecord);
         }
 
        

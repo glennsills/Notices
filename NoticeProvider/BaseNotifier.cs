@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Notices.DocumentService;
@@ -53,18 +54,31 @@ namespace Notices.NoticeService
                 {
                     var noticeRecord =  new NoticeRecord
                     {
+                        Id = documentRecord.RequestKey,
                         WasSuccessful = true,
                         EmailStorageName = result.archiveFile,
                         EmployeeIdentifier = principalIdentifier,
                         NoticeStorageName = documentRecord.DocumentName,
-                        ProcessMessage = "Email and Document Sent"
+                        ProcessMessage = "Email and Document Sent",
+                        Mandate = mandate.ToString(),
+                        NoticeDate = DateTime.Now.Date
+
                     };
-                    _storageService.SaveNoticeRecord(noticeRecord);
+                    noticeRecord.EmailNotices.Add(
+                            new EmailNotice 
+                            {
+                                EmailStorageName = result.archiveFile,
+                                EmailAddress = information.EmailAddresses.FirstOrDefault()
+
+                            }
+                        );
+                        
+                    await _storageService.SaveNoticeRecord(noticeRecord);
                 }
 
                 return new NoticeRecord
                 {
-                    WasSuccessful = false,
+                    WasSuccessful = true,
                         EmailStorageName = null,
                         EmployeeIdentifier = principalIdentifier,
                         NoticeStorageName = documentRecord.DocumentName,

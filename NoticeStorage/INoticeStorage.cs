@@ -8,6 +8,6 @@ namespace Notices.NoticeStorage
     {
          Task UploadFileFromStream(string fileName, Stream stream);
          Task<Stream> GetFileStream(string fileName);
-        void SaveNoticeRecord(NoticeRecord noticeRecord);
+        Task SaveNoticeRecord(NoticeRecord noticeRecord);
     }
 }
